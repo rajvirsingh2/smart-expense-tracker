@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.example.smartexpensetracker.R
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -20,7 +21,7 @@ class GoogleAuthClient(
 ){
 
     private val applicationInfo: ApplicationInfo = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-    val webClientId = applicationInfo.metaData.getString("Web_Client_Id")
+    val webClientId = context.getString(R.string.web_client_id)
     private val auth = Firebase.auth
 
     suspend fun signIn(): IntentSender?{

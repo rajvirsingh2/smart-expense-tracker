@@ -1,5 +1,6 @@
 package com.example.smartexpensetracker.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -17,7 +18,9 @@ import com.example.smartexpensetracker.security.SignInViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.smartexpensetracker.onBoarding.GoogleSignIn
 import com.example.smartexpensetracker.security.GoogleAuthClient
+import com.example.smartexpensetracker.security.SignInResult
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,10 +44,14 @@ fun SignInNav() {
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                 onResult = { result ->
                     coroutineScope.launch {
-                        val signInResult = googleAuthUiClient.getSignInResult(
-                            intent = result.data ?: return@launch
-                        )
-                        viewModel.onSignInResult(signInResult)
+                        try {
+                            val signInResult = googleAuthUiClient.getSignInResult(intent = result.data ?: return@launch)
+                            viewModel.onSignInResult(signInResult)
+                        } catch (e: ApiException) {
+                            Log.e("SignInNav", "Google Sign-In failed: ${e.message}")
+                            viewModel.onSignInResult(SignInResult(null, e.message))
+                        }
+
                     }
                 }
             )
