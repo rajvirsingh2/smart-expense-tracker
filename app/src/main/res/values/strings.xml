@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Smart Expense Tracker</string>
+    <string name="title_activity_splash">Expense Tracker</string>
+    <string name="title_activity_lock_screen">LockScreenActivity</string>
+</resources>
