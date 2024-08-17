@@ -3,4 +3,5 @@
     <string name="title_activity_splash">Expense Tracker</string>
     <string name="title_activity_lock_screen">LockScreenActivity</string>
     <string name="web_client_id">142571118739-oba1dfmvrbrv1quno35gofvifjermviu.apps.googleusercontent.com</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 </resources>

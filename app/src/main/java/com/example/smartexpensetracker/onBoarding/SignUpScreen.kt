@@ -1,8 +1,5 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 package com.example.smartexpensetracker.onBoarding
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,31 +19,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -57,33 +50,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.smartexpensetracker.R
-import com.example.smartexpensetracker.navigation.AccountNavigation
 import com.example.smartexpensetracker.navigation.SignInNav
-import com.example.smartexpensetracker.security.SignInState
 import com.example.smartexpensetracker.ui.theme.dimens
-import java.util.regex.Pattern
+
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF03A9F4))
             .padding(top = 20.dp)
-    ) {
-        // Non-scrollable content above the list
-        Greeting()
+    ){
+        Greetings()
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
 
-        // Scrollable list
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
+        LazyColumn {
             item {
-                Email()
+                SignUpEmail()
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
-                ContinueButton()
+                SignUpButton()
             }
+
             item {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
                 Text(
@@ -93,34 +81,34 @@ fun LoginScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
+
             item {
                 SignInNav()
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
             item {
-                CreateAccount(navController = navController)
+                Login(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun Greeting(){
+fun Greetings(){
     Column(
         modifier =
         Modifier
             .padding(start = 30.dp, top = MaterialTheme.dimens.medium2)
-            .fillMaxWidth(0.9f)
-    ) {
-
+            .fillMaxWidth()
+    ){
         Text(
-            text = "WELCOME BACK",
+            text = "Let's Get Started",
             fontSize = 20.sp
         )
 
         Text(
-            text = "Login to your Account",
-            fontSize = 30.sp,
+            text = "Create an Account",
+            fontSize = 33.sp,
             fontWeight = FontWeight.Bold
         )
     }
@@ -128,16 +116,21 @@ fun Greeting(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Email() {
-    val emailText = rememberSaveable {
+fun SignUpEmail(){
+
+    val name = remember {
         mutableStateOf("")
     }
 
-    val passwordText = rememberSaveable {
+    val emailText = remember {
         mutableStateOf("")
     }
 
-    val passwordVisibility = rememberSaveable {
+    val passwordText = remember {
+        mutableStateOf("")
+    }
+
+    val passwordVisibility = remember {
         mutableStateOf(false)
     }
 
@@ -145,45 +138,101 @@ fun Email() {
         mutableStateOf("")
     }
 
-    Column(Modifier.fillMaxSize()) {
-        // Email
+    val nameErrorMessage = remember {
+        mutableStateOf("")
+    }
+
+    val emailErrorMessage = remember {
+        mutableStateOf("")
+    }
+
+    //Name
+    Column{
+        val containerColor = Color.White
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = MaterialTheme.dimens.medium2, end = MaterialTheme.dimens.medium2),
+                .padding(horizontal = MaterialTheme.dimens.medium2),
+            trailingIcon = {
+                Icon(Icons.Filled.AccountCircle, contentDescription = "email")
+            },
+            value = name.value,
+            onValueChange = {
+                name.value = it
+                nameErrorMessage.value = validateName(name.value)
+            },
+            label = {
+                Text(
+                    text = "Name",
+                    fontSize = 18.sp
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
+                focusedIndicatorColor = Color.Black,
+                unfocusedIndicatorColor =  Color.DarkGray,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Gray,
+            )
+        )
+
+        if (nameErrorMessage.value.isNotEmpty()) {
+            Text(
+                text = nameErrorMessage.value,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small1)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        //Email
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MaterialTheme.dimens.medium2),
             trailingIcon = {
                 Icon(Icons.Filled.Email, contentDescription = "email")
             },
             value = emailText.value,
             onValueChange = {
                 emailText.value = it
+                emailErrorMessage.value = validateEmail(it)
             },
             label = {
                 Text(
                     text = "Email",
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .background(Color.Transparent)
-                        .padding(horizontal = 4.dp)
+                    fontSize = 18.sp
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color.White,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.DarkGray,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = containerColor,
+                focusedIndicatorColor = Color.Black,
+                unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
                 unfocusedLabelColor = Color.Gray
             )
         )
 
+        if(emailErrorMessage.value.isNotEmpty()){
+            Text(
+                text = emailErrorMessage.value,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small1)
+            )
+        }
+
         Spacer(modifier = Modifier.height(18.dp))
 
-        // Password
+        //Password
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = MaterialTheme.dimens.medium2, end = MaterialTheme.dimens.medium2),
+                .padding(horizontal = MaterialTheme.dimens.medium2),
             value = passwordText.value,
             onValueChange = {
                 passwordText.value = it
@@ -197,7 +246,7 @@ fun Email() {
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+                containerColor = containerColor,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
@@ -218,10 +267,8 @@ fun Email() {
                         contentDescription = "show password"
                     )
                 }
-            }
-        )
-
-        if (errorMessage.value.isNotEmpty()) {
+            })
+        if(errorMessage.value.isNotEmpty()){
             Text(
                 text = errorMessage.value,
                 color = MaterialTheme.colorScheme.error,
@@ -232,115 +279,54 @@ fun Email() {
 }
 
 @Composable
-fun ContinueButton(){
-    Button(onClick = { /*TODO*/ },
+fun SignUpButton(){
+    ElevatedButton(onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = MaterialTheme.dimens.medium2, end = MaterialTheme.dimens.medium2)
+            .padding(horizontal = MaterialTheme.dimens.medium2)
             .height(MaterialTheme.dimens.buttonHeight),
         shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Black
         )) {
-        Text(text = "Login")
+        Text(text = "Continue")
     }
-
 }
 
-@Composable
-fun GoogleSignIn(
-    state: SignInState,
-    onSignInClick: () -> Unit
-) {
-    val context = LocalContext.current
-    LaunchedEffect(key1 = state.signInError) {
-        state.signInError?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+fun validateName(name: String): String {
+    return if (name.isEmpty()) "Name is required" else ""
+}
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth() // Take full width for the outer box
-            .padding(horizontal = MaterialTheme.dimens.medium2) // Apply padding to the left and right sides
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .height(MaterialTheme.dimens.buttonHeight)
-                .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
-                .background(Color.White, RoundedCornerShape(8.dp))
-                .clickable { onSignInClick() }
-                .padding(
-                    top = 10.dp,
-                    start = MaterialTheme.dimens.medium2,
-                    end = MaterialTheme.dimens.medium2,
-                    bottom = 10.dp
-                )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.google), // Replace with your Google icon resource
-                    contentDescription = "Google",
-                    modifier = Modifier.size(26.dp)
-                )
-
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium2))
-            }
-
-            Text(
-                text = "Continue with Google",
-                color = Color.DarkGray,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
-        }
+fun validateEmail(email: String): String {
+    return if (email.isEmpty()) {
+        "Email is required"
+    } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        "Invalid email address"
+    } else {
+        ""
     }
 }
 
 @Composable
-fun CreateAccount(navController: NavController) {
+fun Login(navController: NavController){
     Row(modifier = Modifier
         .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center) {
-        Text(text = "Don't have an account?",
+        horizontalArrangement = Arrangement.Absolute.Center){
+        Text(text = "Already have an account?",
             fontSize = 18.sp)
-        Text(text = "Sign Up",
+
+        Text(text = "Login Here",
             textDecoration = TextDecoration.Underline,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable {
-                navController.navigate("SignUpScreen") {
-                    popUpTo("LoginScreen") { inclusive = true }
+            modifier = Modifier
+                .clickable {
+                    navController.navigate("LoginScreen") {
+                        popUpTo("SignUpScreen") {
+                            inclusive = true
+                        }
+                    }
                 }
-            }
         )
     }
 }
-
-fun validatePassword(password: String): String{
-    val uppercasePattern = Pattern.compile(".*[A-Z].*")
-    val digitPattern = Pattern.compile(".*\\d.*")
-    val specialCharPattern = Pattern.compile(".*[!@#$%^&*()].*")
-
-    return when{
-        password.length < 8 -> "Password must be at least 8 characters long."
-        !uppercasePattern.matcher(password).matches() -> "Password must contain at least one uppercase letter."
-        !digitPattern.matcher(password).matches() -> "Password must contain at least one digit."
-        !specialCharPattern.matcher(password).matches() -> "Password must contain at least one special character."
-        else -> ""
-    }
-}
-
