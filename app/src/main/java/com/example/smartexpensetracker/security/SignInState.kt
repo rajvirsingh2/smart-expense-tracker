@@ -1,6 +1,7 @@
 package com.example.smartexpensetracker.security
 
-data class SignInState(
+data class GoogleSignInState(
     val isSignInSuccessful: Boolean = false,
     val signInError: String? = null
 )
+

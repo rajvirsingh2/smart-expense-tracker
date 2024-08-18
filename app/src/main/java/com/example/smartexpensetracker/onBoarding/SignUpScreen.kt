@@ -1,11 +1,10 @@
 package com.example.smartexpensetracker.onBoarding
 
-import androidx.compose.foundation.Image
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,10 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -30,48 +26,59 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.smartexpensetracker.R
 import com.example.smartexpensetracker.navigation.SignInNav
 import com.example.smartexpensetracker.ui.theme.dimens
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
 fun SignUpScreen(navController: NavController) {
+    val name = rememberSaveable { mutableStateOf("") }
+    val emailText = rememberSaveable { mutableStateOf("") }
+    val passwordText = rememberSaveable { mutableStateOf("") }
+    val nameErrorMessage = remember { mutableStateOf("") }
+    val emailErrorMessage = remember { mutableStateOf("") }
+    val errorMessage = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF03A9F4))
             .padding(top = 20.dp)
-    ){
+    ) {
         Greetings()
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
 
         LazyColumn {
             item {
-                SignUpEmail()
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
-                SignUpButton()
+                SignUpEmail(
+                    name = name,
+                    emailText = emailText,
+                    passwordText = passwordText,
+                    nameErrorMessage = nameErrorMessage,
+                    emailErrorMessage = emailErrorMessage,
+                    errorMessage = errorMessage
+                )
             }
-
             item {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
                 Text(
@@ -81,7 +88,6 @@ fun SignUpScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
-
             item {
                 SignInNav()
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
@@ -92,6 +98,7 @@ fun SignUpScreen(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 fun Greetings(){
@@ -116,45 +123,24 @@ fun Greetings(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpEmail(){
+fun SignUpEmail(
+    name: MutableState<String>,
+    emailText: MutableState<String>,
+    passwordText: MutableState<String>,
+    nameErrorMessage: MutableState<String>,
+    emailErrorMessage: MutableState<String>,
+    errorMessage: MutableState<String>
+) {
+    val passwordVisibility = rememberSaveable { mutableStateOf(false) }
 
-    val name = remember {
-        mutableStateOf("")
-    }
-
-    val emailText = remember {
-        mutableStateOf("")
-    }
-
-    val passwordText = remember {
-        mutableStateOf("")
-    }
-
-    val passwordVisibility = remember {
-        mutableStateOf(false)
-    }
-
-    val errorMessage = remember {
-        mutableStateOf("")
-    }
-
-    val nameErrorMessage = remember {
-        mutableStateOf("")
-    }
-
-    val emailErrorMessage = remember {
-        mutableStateOf("")
-    }
-
-    //Name
-    Column{
-        val containerColor = Color.White
+    Column {
+        // Name
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = MaterialTheme.dimens.medium2),
             trailingIcon = {
-                Icon(Icons.Filled.AccountCircle, contentDescription = "email")
+                Icon(Icons.Filled.AccountCircle, contentDescription = "name")
             },
             value = name.value,
             onValueChange = {
@@ -169,13 +155,13 @@ fun SignUpEmail(){
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = containerColor,
-                unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
-                unfocusedIndicatorColor =  Color.DarkGray,
+                unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black,
-                unfocusedLabelColor = Color.Gray,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -189,7 +175,7 @@ fun SignUpEmail(){
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        //Email
+        // Email
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,7 +196,7 @@ fun SignUpEmail(){
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = containerColor,
+                containerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
@@ -218,7 +204,7 @@ fun SignUpEmail(){
             )
         )
 
-        if(emailErrorMessage.value.isNotEmpty()){
+        if (emailErrorMessage.value.isNotEmpty()) {
             Text(
                 text = emailErrorMessage.value,
                 color = MaterialTheme.colorScheme.error,
@@ -228,7 +214,7 @@ fun SignUpEmail(){
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        //Password
+        // Password
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -246,7 +232,7 @@ fun SignUpEmail(){
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = containerColor,
+                containerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
@@ -267,8 +253,10 @@ fun SignUpEmail(){
                         contentDescription = "show password"
                     )
                 }
-            })
-        if(errorMessage.value.isNotEmpty()){
+            }
+        )
+
+        if (errorMessage.value.isNotEmpty()) {
             Text(
                 text = errorMessage.value,
                 color = MaterialTheme.colorScheme.error,
@@ -276,11 +264,38 @@ fun SignUpEmail(){
             )
         }
     }
+
+    Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
+    SignUpButton(name.value, emailText.value, passwordText.value)
 }
 
+
 @Composable
-fun SignUpButton(){
-    ElevatedButton(onClick = { /*TODO*/ },
+fun SignUpButton(
+    name: String,
+    email: String,
+    password: String
+) {
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+
+    ElevatedButton(
+        onClick = {
+            if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(context as Activity) { task ->
+                        if (task.isSuccessful) {
+                            // Registration successful, navigate to another screen or show success message
+                            Toast.makeText(context, "Registration successful!", Toast.LENGTH_LONG).show()
+                        } else {
+                            // Show error message
+                            Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = MaterialTheme.dimens.medium2)
@@ -288,10 +303,12 @@ fun SignUpButton(){
         shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Black
-        )) {
+        )
+    ) {
         Text(text = "Continue")
     }
 }
+
 
 fun validateName(name: String): String {
     return if (name.isEmpty()) "Name is required" else ""

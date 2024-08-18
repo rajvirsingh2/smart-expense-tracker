@@ -16,7 +16,6 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="true"
-            android:label="@string/title_activity_sign_up"
             android:theme="@style/Theme.SmartExpenseTracker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +26,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="false"
-            android:label="@string/title_activity_lock_screen"
+            android:label="@string/title_activity_splash"
             android:theme="@style/Theme.SmartExpenseTracker" />
         <activity
             android:name=".LockScreenActivity"

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SignInViewModel: ViewModel() {
-    private val _state = MutableStateFlow(SignInState())
+    private val _state = MutableStateFlow(GoogleSignInState())
     val state = _state.asStateFlow()
 
     fun onSignInResult(result: SignInResult){
@@ -20,7 +20,7 @@ class SignInViewModel: ViewModel() {
 
     fun resetState(){
         _state.update {
-            SignInState()
+            GoogleSignInState()
         }
     }
 }

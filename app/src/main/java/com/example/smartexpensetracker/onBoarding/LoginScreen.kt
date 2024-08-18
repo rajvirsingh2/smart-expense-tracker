@@ -36,35 +36,37 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.smartexpensetracker.R
-import com.example.smartexpensetracker.navigation.AccountNavigation
 import com.example.smartexpensetracker.navigation.SignInNav
-import com.example.smartexpensetracker.security.SignInState
+import com.example.smartexpensetracker.security.GoogleSignInState
 import com.example.smartexpensetracker.ui.theme.dimens
+import com.google.firebase.auth.FirebaseAuth
 import java.util.regex.Pattern
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
+    val emailText = rememberSaveable { mutableStateOf("") }
+    val passwordText = rememberSaveable { mutableStateOf("") }
+    val errorMessage = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,9 +82,9 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier.weight(1f)
         ) {
             item {
-                Email()
+                Email(emailText, passwordText, errorMessage)
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
-                ContinueButton()
+                ContinueButton(emailText.value, passwordText.value, navController)
             }
             item {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
@@ -128,21 +130,12 @@ fun Greeting(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Email() {
-    val emailText = rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val passwordText = rememberSaveable {
-        mutableStateOf("")
-    }
+fun Email(emailText: MutableState<String>,
+          passwordText: MutableState<String>,
+          errorMessage: MutableState<String>) {
 
     val passwordVisibility = rememberSaveable {
         mutableStateOf(false)
-    }
-
-    val errorMessage = remember {
-        mutableStateOf("")
     }
 
     Column(Modifier.fillMaxSize()) {
@@ -232,8 +225,25 @@ fun Email() {
 }
 
 @Composable
-fun ContinueButton(){
-    Button(onClick = { /*TODO*/ },
+fun ContinueButton(email: String, password: String, navController: NavController){
+
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+
+    Button(onClick = {
+        if(email.isNotEmpty() && password.isNotEmpty()){
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(context, "Login Failed; ${it.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }else{
+            Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+        }
+    },
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = MaterialTheme.dimens.medium2, end = MaterialTheme.dimens.medium2)
@@ -249,7 +259,7 @@ fun ContinueButton(){
 
 @Composable
 fun GoogleSignIn(
-    state: SignInState,
+    state: GoogleSignInState,
     onSignInClick: () -> Unit
 ) {
     val context = LocalContext.current
