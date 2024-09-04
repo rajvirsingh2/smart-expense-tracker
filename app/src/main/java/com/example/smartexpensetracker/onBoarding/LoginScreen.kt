@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 package com.example.smartexpensetracker.onBoarding
 
 import android.widget.Toast
@@ -54,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.smartexpensetracker.R
-import com.example.smartexpensetracker.navigation.SignInNav
+import com.example.smartexpensetracker.navigation.GoogleSignInNav
 import com.example.smartexpensetracker.security.GoogleSignInState
 import com.example.smartexpensetracker.ui.theme.dimens
 import com.google.firebase.auth.FirebaseAuth
@@ -83,8 +81,10 @@ fun LoginScreen(navController: NavController) {
         ) {
             item {
                 Email(emailText, passwordText, errorMessage)
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.extraLarge))
-                ContinueButton(emailText.value, passwordText.value, navController)
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+                ForgotPassword()
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
+                ContinueButton(emailText.value, passwordText.value)
             }
             item {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
@@ -96,7 +96,7 @@ fun LoginScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
             item {
-                SignInNav()
+                GoogleSignInNav()
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
             item {
@@ -225,7 +225,7 @@ fun Email(emailText: MutableState<String>,
 }
 
 @Composable
-fun ContinueButton(email: String, password: String, navController: NavController){
+fun ContinueButton(email: String, password: String){
 
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
@@ -255,6 +255,21 @@ fun ContinueButton(email: String, password: String, navController: NavController
         Text(text = "Login")
     }
 
+}
+
+@Composable
+fun ForgotPassword(){
+    Column{
+        Text(
+            text = "Forgot Password?",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(start = 210.dp)
+                .clickable { /*TODO*/ }
+        )
+    }
 }
 
 @Composable

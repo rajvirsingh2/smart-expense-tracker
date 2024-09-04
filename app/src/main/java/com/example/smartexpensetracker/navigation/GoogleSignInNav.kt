@@ -24,7 +24,7 @@ import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignInNav() {
+fun GoogleSignInNav() {
     val context = LocalContext.current
     val googleAuthUiClient by lazy {
         GoogleAuthClient(

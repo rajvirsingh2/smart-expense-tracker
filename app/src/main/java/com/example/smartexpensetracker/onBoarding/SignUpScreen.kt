@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.smartexpensetracker.navigation.SignInNav
+import com.example.smartexpensetracker.navigation.GoogleSignInNav
 import com.example.smartexpensetracker.ui.theme.dimens
 import com.google.firebase.auth.FirebaseAuth
 
@@ -89,7 +89,7 @@ fun SignUpScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
             item {
-                SignInNav()
+                GoogleSignInNav()
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
             }
             item {
@@ -285,10 +285,8 @@ fun SignUpButton(
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(context as Activity) { task ->
                         if (task.isSuccessful) {
-                            // Registration successful, navigate to another screen or show success message
                             Toast.makeText(context, "Registration successful!", Toast.LENGTH_LONG).show()
                         } else {
-                            // Show error message
                             Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                         }
                     }
