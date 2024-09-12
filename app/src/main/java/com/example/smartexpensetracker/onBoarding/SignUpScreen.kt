@@ -195,8 +195,8 @@ fun SignUpEmail(
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
@@ -231,8 +231,8 @@ fun SignUpEmail(
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),

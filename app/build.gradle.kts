@@ -71,7 +71,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.auth)
     implementation (libs.androidx.material.icons.extended)
-    implementation ("androidx.compose.material3:material3-window-size-class:1.2.1")
+    //noinspection UseTomlInstead
+    implementation ("androidx.compose.material3:material3-window-size-class:1.3.0")
     implementation(libs.ui.tooling.preview)
     implementation (libs.accompanist.pager)
     implementation(libs.material3)

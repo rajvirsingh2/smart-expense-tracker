@@ -161,10 +161,10 @@ fun Email(emailText: MutableState<String>,
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color.White,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.DarkGray,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedPlaceholderColor = Color.Black,
+                unfocusedPlaceholderColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
                 unfocusedLabelColor = Color.Gray
             )
@@ -189,8 +189,8 @@ fun Email(emailText: MutableState<String>,
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.DarkGray,
                 focusedLabelColor = Color.Black.copy(.9f),
